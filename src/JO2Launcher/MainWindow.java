@@ -42,8 +42,8 @@ public class MainWindow extends javax.swing.JFrame {
     /**
      * Creates new form MainWindow
      */
-    private static String ptl = "http://127.0.0.1/patchlist.txt";
-    //private static String ptl = "http://www.jutsuonline.co/patchlist.txt";
+    //private static String ptl = "http://127.0.0.1/patchlist.txt";
+    private static String ptl = "http://www.jutsuonline.co/patchlist.txt";
     static OsCheck.OSType ostype=OsCheck.getOperatingSystemType();
     private final static Charset ENCODING = StandardCharsets.UTF_8;
       private static void log(Object aObject){

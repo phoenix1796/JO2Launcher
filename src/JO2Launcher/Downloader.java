@@ -190,6 +190,7 @@ public class Downloader extends javax.swing.JFrame implements Runnable{
                 connection.setRequestProperty("Range"," bytes="+totalDataRead+"-");                   
 
                 System.out.println(connection.getResponseMessage());
+                int check = 0;
                 if(!connection.getResponseMessage().equals("Requested Range Not Satisfiable"))
                 {
                     filesize_serv = connection.getContentLength();
@@ -198,27 +199,32 @@ public class Downloader extends javax.swing.JFrame implements Runnable{
                     totaldata.setText(String.valueOf(filesize_serv/(1024*1024)));
                     downloadbar.setMaximum(filesize_serv);
                             stream = connection.getInputStream();
-                            while(status =="DOWNLOADING")
+                            while(check!=-1)
                             {
-                                byte buffer[];
-                                if(filesize_serv-totalDataRead > MAX_BUFFER_SIZE)
-                                {
-                                    buffer = new byte [MAX_BUFFER_SIZE];
-                                }
-                                else
-                                {
-                                    buffer = new byte[filesize_serv-totalDataRead];
-                                }
-                                int read = stream.read(buffer);
-                                if(read == -1)
-                                    break;
-                                fl.write(buffer,0,read);
-                                totalDataRead += read;
-                                dataread.setText(String.valueOf(totalDataRead));
-                                downloadbar.setValue(totalDataRead);
+                                   if(status.equalsIgnoreCase("PAUSED"))
+                                   {
+                                       continue;
+                                   }
+                                   byte buffer[];
+                                   if(filesize_serv-totalDataRead > MAX_BUFFER_SIZE)
+                                   {
+                                       buffer = new byte [MAX_BUFFER_SIZE];
+                                   }
+                                   else
+                                   {
+                                       buffer = new byte[filesize_serv-totalDataRead];
+                                   }
+                                   int read = stream.read(buffer);
+                                   check=read;
+                                   if(read == -1)
+                                       break;
+                                   fl.write(buffer,0,read);
+                                   totalDataRead += read;
+                                   dataread.setText(String.valueOf(totalDataRead/(1024*1024)));
+                                   downloadbar.setValue(totalDataRead);
                             }
-                            if(status.equals("PAUSED"))
-                                System.exit(0);
+                          //  if(status.equals("PAUSED"))
+                           //     System.exit(0);
                 }
                         fl.close();
                         if(stream!=null)
