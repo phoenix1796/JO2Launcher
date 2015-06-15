@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package JO2Launcher;
+
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -29,9 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
 
 /**
  *
@@ -100,6 +105,27 @@ public class MainWindow extends javax.swing.JFrame {
                     fos.close();
                 }
       }
+    static Thread Reg = new Thread(new Runnable() {
+        public void run () {
+        JEditorPane website = null;
+            try {
+                //website = new JEditorPane("http://127.0.0.1/");
+                website = new JEditorPane("http://jutsuonline.co/download");
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        website.setEditable(false);
+        JFrame frame = new JFrame("Registration");
+        JScrollPane wb_reg=new JScrollPane(website);
+        JScrollBar vertical;
+            vertical = wb_reg.getVerticalScrollBar();
+        vertical.setValue( vertical.getMaximum() );
+        frame.add(wb_reg);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+        }
+    });
     static Thread update_first = new Thread(new Runnable() {
      public void run() {
             List<Path> p_src = new ArrayList<Path>();
@@ -123,6 +149,9 @@ public class MainWindow extends javax.swing.JFrame {
                 Downloader D1 = new Downloader(patch_url,patch_name);
                 D1.start();
                 D1.setVisible(true);
+                URI uri = new URI("http://jutsuonline.co/download");
+                Desktop dt=Desktop.getDesktop();
+                dt.browse(uri);
                 Downloader.t.join();
                 D1.setVisible(false);
                 temp_dest=Paths.get(System.getProperty("user.dir").replace("\\", "/") + "/Data/" + patch_name);
@@ -151,6 +180,8 @@ public class MainWindow extends javax.swing.JFrame {
         } catch (IOException ex) {
              Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
          } catch (InterruptedException ex) {
+             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (URISyntaxException ex) {
              Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
          }        
        }});
@@ -428,17 +459,18 @@ public class MainWindow extends javax.swing.JFrame {
         {
             switch(ostype)
             {
-                case Windows:log("Windows operating system");
-            {
+                case Windows: {
+                log("Windows operating system");
+            
                 try {
                    //Process p = Runtime.getRuntime().exec(System.getProperty("user.dir").replace("\\", "/") + "/JO2.exe");
                    // Runtime.getRuntime().exec(System.getProperty("user.dir").replace("\\", "/") + "/JO2.exe", null, new File(System.getProperty("user.dir").replace("\\", "/")));
                     // Runtime.getRuntime().exec(System.getProperty("user.dir") + "\\a.bat", null, new File(System.getProperty("user.dir")));
-                    String s = "cmd /c start "+System.getProperty("user.dir")+"\\JO2.exe";
+                    String s = "cmd /c start "+System.getProperty("user.dir")+"\\a.bat";
                     log(s);
                     Process p =Runtime.getRuntime().exec(s);
-                    String a = System.getProperty("user.dir")+"/JO2.app";
-                    log(a);
+                    //String a = System.getProperty("user.dir")+"/JO2.app";
+                    //log(a);
                     if(p.isAlive())
                         log("working");
 
@@ -447,8 +479,9 @@ public class MainWindow extends javax.swing.JFrame {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     log(ex);
                 }
-            }
+                
                 break;
+                }
                 case MacOS:log("MacOS , Awesome man i couldn't test it on one, so be careful ;D");
                 String a = System.getProperty("user.dir")+"/JO2.app";
                 String s = "open"+a;
